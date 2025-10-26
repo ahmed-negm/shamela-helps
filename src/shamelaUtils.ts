@@ -57,6 +57,10 @@ function extractMarkdownFromHtml(html: string): string {
     text = text
       .replace(/[\uFD3E]{2,}/g, "\uFD3E")
       .replace(/[\uFD3F]{2,}/g, "\uFD3F");
+
+    // Remove footer references with Arabic numerals like (١), (٢), (٣), etc.
+    text = text.replace(/\([\u0660-\u0669\u06F0-\u06F9]+\)/g, '');
+
     markdown += `${text}\n\n`;
   });
 

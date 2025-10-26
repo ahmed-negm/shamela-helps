@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "tsc && clear && node dist/index.js"
+    "start": "rm -rf dist && tsc && clear && node dist/index.js"
   },
   "keywords": [],
   "author": "",
