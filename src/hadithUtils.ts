@@ -1,8 +1,9 @@
 // src/parseHadithMarkdown.ts
 export interface Hadith {
-  chapterId: number;
+  subchapterId: number;
   hadithId: number;
   hadithText: string;
+  subChapterName: string;
 }
 
 export type HadithCollection = Hadith[];
@@ -53,14 +54,19 @@ export function parseHadithMarkdown(markdown: string): HadithCollection {
   const hadithMatches = Array.from(text.matchAll(hadithRegex));
 
   // Track chapter positions and hadith positions
-  type Marker = { type: "chapter" | "hadith"; id: number; index: number };
+  type Marker = { type: "chapter" | "hadith"; id: number; index: number; name?: string };
   const markers: Marker[] = [];
 
   for (const m of chapterMatches) {
+    // Extract chapter name by removing the number and separator
+    const fullMatch = m[0];
+    const chapterName = fullMatch.replace(/[٠-٩]+\s*[-\.]\s*(?:بَاب[ٌُ]?\s+)?/, "").trim();
+    
     markers.push({
       type: "chapter",
       id: convertArabicDigitsToNumber(m[1]),
       index: m.index ?? 0,
+      name: chapterName,
     });
   }
 
@@ -77,6 +83,7 @@ export function parseHadithMarkdown(markdown: string): HadithCollection {
 
   // Parse sequentially
   let currentChapterId: number | null = null;
+  let currentChapterName: string = "";
   for (let i = 0; i < markers.length; i++) {
     const marker = markers[i];
     const nextMarker = markers[i + 1];
@@ -84,6 +91,7 @@ export function parseHadithMarkdown(markdown: string): HadithCollection {
 
     if (marker.type === "chapter") {
       currentChapterId = marker.id;
+      currentChapterName = marker.name || "";
       continue;
     }
 
@@ -95,9 +103,10 @@ export function parseHadithMarkdown(markdown: string): HadithCollection {
         .trim();
 
       results.push({
-        chapterId: currentChapterId,
+        subchapterId: currentChapterId,
         hadithId: marker.id,
         hadithText,
+        subChapterName: currentChapterName,
       });
     }
   }
