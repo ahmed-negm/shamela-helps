@@ -1,4 +1,5 @@
 import fs from "fs/promises";
+import { existsSync } from "fs";
 import { getShamelaContent } from "./shamelaUtils";
 import {
   parseHadithMarkdown,
@@ -19,6 +20,13 @@ async function main() {
 
     for (const hadith of hadithJson) {
       const { hadithId, subchapterId, hadithText, subChapterName } = hadith;
+      const outDir = `../Zettelkasten/Sunnah/صحيح البخاري/الأحاديث`;
+      const outPath = `${outDir}/${bukhari}-${toArabicDigits(hadithId)}.md`;
+
+      if (existsSync(outPath)) {
+        continue;
+      }
+
       const md = `---
 type: hadith
 book_name: ${bukhari}
@@ -30,12 +38,8 @@ hadith_id: ${hadithId}
 ---
 ${replaceSymbols(hadithText)}
 `;
-      await fs.writeFile(
-        `../Zettelkasten/Sunnah/صحيح البخاري/الأحاديث/${bukhari}-${toArabicDigits(
-          hadithId
-        )}.md`,
-        md
-      );
+
+      await fs.writeFile(outPath, md);
     }
 
     console.log(

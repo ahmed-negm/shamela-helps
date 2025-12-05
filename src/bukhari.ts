@@ -11,4 +11,5 @@ export const bookInfo: {
     { chapterId: 5, chapterName: "كتاب الغسل", start: 334, end: 360 },
     { chapterId: 6, chapterName: "كتاب الحيض", start: 361, end: 386 },
     { chapterId: 7, chapterName: "باب التيمم", start: 387, end: 400 },
+    { chapterId: 8, chapterName: "كتاب الصلاة", start: 401, end: 486 },
 ];
